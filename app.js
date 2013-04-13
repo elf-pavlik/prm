@@ -34,6 +34,7 @@ app.configure('production', function(){
 
 app.get('/', routes.index);
 app.post('/auth', routes.auth(AUDIENCE));
+app.get('/show', routes.show);
 app.get('/logout', routes.logout);
 
 app.listen(3000);

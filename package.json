@@ -14,6 +14,7 @@
   "dependencies": {
     "express": "2.5.8",
     "jade": ">= 0.0.1",
+    "cradle": "0.6.x",
     "qs": "0.4.2"
   },
   "devDependencies": {},

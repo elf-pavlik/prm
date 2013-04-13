@@ -1,4 +1,5 @@
 var https = require('https'),
+    cradle = require('cradle'),
     qs = require('qs');
 /*
  * GET home page.
@@ -22,7 +23,7 @@ exports.auth = function (audience) {
         if (verified.status == 'okay') {
           console.info('browserid auth successful, setting req.session.email');
           req.session.email = verified.email;
-          resp.redirect('/');
+          resp.redirect('/show');
         } else {
           console.error(verified.reason);
           resp.writeHead(403);
@@ -31,7 +32,7 @@ exports.auth = function (audience) {
         resp.end();
       });
     };
-    
+
     var assertion = req.body.assertion;
 
     var body = qs.stringify({
@@ -51,6 +52,22 @@ exports.auth = function (audience) {
     request.write(body);
     request.end();
   };
+};
+
+exports.show = function (req, resp) {
+  if(req.session.email) {
+    var db = new(cradle.Connection)().database('ouishare');
+    db.view('peer/byEmail', { key: req.session.email }, function (err, doc) {
+      if (err) {
+        console.info(err);
+        // Handle error
+      } else {
+        resp.render('show', { peer: doc[0].value, user: req.session.email, csrf: req.session._csrf })
+      }
+    });
+  } else {
+    resp.redirect('/');
+  }
 };
 
 exports.logout = function (req, resp) {
